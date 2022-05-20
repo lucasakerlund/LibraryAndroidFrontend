@@ -32,9 +32,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void login(View view){
         view.setEnabled(false);
-        new Thread(() -> {
-            BackendCaller.inst().test();
-        }).start();
+        BackendCaller.inst().loginCustomer((staff) -> {
+            if(staff == null){
+                this.runOnUiThread(() -> {
+                    view.setEnabled(true);
+                });
+                return;
+            }
+            System.out.println((staff.getFirstName()));
+        });
         ((Button)view).setText("Loggar in");
     }
 

@@ -1,21 +1,15 @@
 package com.example.library.abstracts;
 
-import android.os.AsyncTask;
-
-import androidx.annotation.Nullable;
-import androidx.loader.content.AsyncTaskLoader;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.library.MainActivity;
+import com.example.library.callbacks.Callback;
+import com.example.library.callbacks.RequestCallback;
+import com.example.library.models.Staff;
 
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class BackendCaller {
 
@@ -23,8 +17,21 @@ public class BackendCaller {
 
     private HttpURLConnection connection;
 
-    private BackendCaller(){
+    private Thread caller;
 
+    private ConcurrentLinkedQueue<RequestCallback> tasks;
+
+    private BackendCaller(){
+        this.tasks = new ConcurrentLinkedQueue<>();
+        caller = new Thread(() -> {
+            while(true){
+                if(tasks.isEmpty()){
+                    continue;
+                }
+                tasks.poll().call();
+            }
+        });
+        caller.start();
     }
 
     public static BackendCaller inst(){
@@ -57,8 +64,24 @@ public class BackendCaller {
         return output;
     }
 
-    public void test(){
-        String data = request("api/customers/login?email=test&password=123");
-        System.out.println(data + " abc");
+    public void loginCustomer(Callback<Staff> callback) {
+        tasks.add(() -> {
+            String data = request("api/employees/login?username=test&password=123");
+            Staff s = null;
+            try{
+                JSONObject object = new JSONObject(data);
+                s = new Staff(
+                        object.getInt("employee_id"),
+                        object.getString("first_name"),
+                        object.getString("last_name"),
+                        object.getString("username"),
+                        object.getString("password"),
+                        object.getString("role")
+                );
+            }catch(Exception e){
+
+            }
+            callback.call(s);
+        });
     }
 }
