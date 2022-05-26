@@ -2,6 +2,7 @@ package com.example.library.abstracts;
 
 import com.example.library.callbacks.Callback;
 import com.example.library.callbacks.RequestCallback;
+import com.example.library.models.Book;
 import com.example.library.models.Staff;
 
 import org.json.JSONObject;
@@ -64,9 +65,9 @@ public class BackendCaller {
         return output;
     }
 
-    public void loginCustomer(Callback<Staff> callback) {
+    public void loginCustomer(String username, String password, Callback<Staff> callback) {
         tasks.add(() -> {
-            String data = request("api/employees/login?username=test&password=123");
+            String data = request("api/employees/login?username=" + username + "&password=" + password);
             Staff s = null;
             try{
                 JSONObject object = new JSONObject(data);
@@ -81,7 +82,27 @@ public class BackendCaller {
             }catch(Exception e){
 
             }
+            StaffDetails.inst().setStaff(s);
             callback.call(s);
+        });
+    }
+
+    public void getBookInformation(String isbn, Callback<Book> callback){
+        tasks.add(() -> {
+            String data = request("api/google/isbn/" + isbn);
+            Book book = null;
+            try {
+                JSONObject object = new JSONObject(data);
+                book = new Book(
+                        object.getString("title"),
+                        object.getString("isbn"),
+                        object.getString("published"),
+                        object.getString("image")
+                );
+            }catch(Exception e){
+
+            }
+            callback.call(book);
         });
     }
 }

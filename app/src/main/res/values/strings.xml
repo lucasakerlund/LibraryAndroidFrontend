@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Library</string>
     <string name="login_button">Logga in</string>
-    <string name="email_prompt">Email</string>
+    <string name="email_prompt">Användarnamn</string>
     <string name="password_prompt">Lösenord</string>
     <string name="login_label">Logga in</string>
+    <string name="logut">Logga ut</string>
+    <string name="bookTitle">Titel:</string>
 </resources>
