@@ -7,8 +7,12 @@ import com.example.library.models.Staff;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -65,6 +69,34 @@ public class BackendCaller {
         return output;
     }
 
+    private String post(String path, String body){
+        try {
+            URL url = new URL("http://192.168.3.182:8080/" + path);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+
+            try(OutputStream os = connection.getOutputStream()){
+                byte[] input = body.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            try(BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))){
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+                return response.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public void loginCustomer(String username, String password, Callback<Staff> callback) {
         tasks.add(() -> {
             String data = request("api/employees/login?username=" + username + "&password=" + password);
@@ -103,6 +135,20 @@ public class BackendCaller {
 
             }
             callback.call(book);
+        });
+    }
+
+    public void addBook(String isbn, Callback<Boolean> callback){
+        tasks.add(() -> {
+            JSONObject object = null;
+            try {
+                object = new JSONObject();
+                object.put("isbn", isbn);
+            }catch(Exception e){
+
+            }
+            String data = post("api/book_details/add", object.toString());
+            callback.call(Boolean.parseBoolean(data));
         });
     }
 }

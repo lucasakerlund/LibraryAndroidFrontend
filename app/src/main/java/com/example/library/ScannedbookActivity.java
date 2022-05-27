@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.library.abstracts.BackendCaller;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -20,6 +21,8 @@ import java.net.URL;
 public class ScannedbookActivity extends AppCompatActivity {
 
     private ImageView imageView;
+
+    private TextView errorLabel;
 
     private TextView bookTitle;
     private TextView bookIsbn;
@@ -34,6 +37,7 @@ public class ScannedbookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scannedbook);
 
         imageView = findViewById(R.id.imageView);
+        errorLabel = findViewById(R.id.bookViewError);
         bookTitle = findViewById(R.id.bookTitleValue);
         bookIsbn = findViewById(R.id.bookIsbnValue);
         bookPublished = findViewById(R.id.bookPublishedValue);
@@ -47,7 +51,15 @@ public class ScannedbookActivity extends AppCompatActivity {
     }
 
     public void add(View view){
+        BackendCaller.inst().addBook(bookIsbn.getText().toString(), (b) -> {
+            runOnUiThread(() -> {
+                errorLabel.setVisibility(!b ? View.VISIBLE : View.INVISIBLE);
+            });
+            if(!b){
+                return;
+            }
 
+        });
     }
 
     public void rescan(View view){
