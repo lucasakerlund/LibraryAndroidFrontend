@@ -1,10 +1,15 @@
 package com.example.library.abstracts;
 
+import android.telecom.Call;
+
 import com.example.library.callbacks.Callback;
 import com.example.library.callbacks.RequestCallback;
 import com.example.library.models.Book;
+import com.example.library.models.CopyItem;
+import com.example.library.models.Library;
 import com.example.library.models.Staff;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -13,6 +18,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -138,17 +147,73 @@ public class BackendCaller {
         });
     }
 
-    public void addBook(String isbn, Callback<Boolean> callback){
+    public void getLibraries(Callback<List<Library>> callback){
         tasks.add(() -> {
-            JSONObject object = null;
+            String data = request("api/libraries");
+            List<Library> output = new ArrayList<>();
             try {
-                object = new JSONObject();
-                object.put("isbn", isbn);
+                JSONArray array = new JSONArray(data);
+                for (int i = 0; array.length() > i; i++) {
+                    JSONObject o = array.getJSONObject(i);
+                    output.add(new Library(
+                            o.getInt("library_id"),
+                            o.getString("name"),
+                            o.getString("address"),
+                            o.getString("county")
+                    ));
+                }
             }catch(Exception e){
 
             }
-            String data = post("api/book_details/add", object.toString());
+            callback.call(output);
+        });
+    }
+
+    public void addBook(String isbn, Callback<Boolean> callback){
+        tasks.add(() -> {
+            JSONObject body = new JSONObject();
+            try{
+                body.put("isbn", isbn);
+            }catch(Exception e){
+
+            }
+           String data = post("api/book_details/add", body.toString());
             callback.call(Boolean.parseBoolean(data));
+        });
+    }
+
+    public void addCopies(String isbn, int libraryId, int amount, Callback<Boolean> callback){
+        tasks.add(() -> {
+            JSONObject body = new JSONObject();
+            try {
+                body.put("isbn", isbn);
+                body.put("library_id", libraryId);
+                body.put("amount", amount);
+            }catch(Exception e){
+
+            }
+            String data = post("api/books/add_multiple", body.toString());
+            callback.call(Boolean.parseBoolean(data));
+        });
+    }
+
+    public void getCopiesInLibrary(int libraryId, String isbn, Callback<List<CopyItem>> callback){
+        tasks.add(() -> {
+            String data = request("api/books/copies_in_library?library_id=" + libraryId + "&isbn=" + isbn);
+            List<CopyItem> output = new ArrayList<>();
+            try{
+                JSONArray array = new JSONArray(data);
+                for (int i = 0; array.length() > i; i++) {
+                    JSONObject o = array.getJSONObject(i);
+                    output.add(new CopyItem(
+                       o.getInt("book_id"),
+                       o.getInt("available") == 1
+                    ));
+                }
+            }catch(Exception e){
+
+            }
+            callback.call(output);
         });
     }
 }

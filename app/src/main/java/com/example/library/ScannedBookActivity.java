@@ -18,7 +18,7 @@ import org.w3c.dom.Text;
 
 import java.net.URL;
 
-public class ScannedbookActivity extends AppCompatActivity {
+public class ScannedBookActivity extends AppCompatActivity {
 
     private ImageView imageView;
 
@@ -30,6 +30,8 @@ public class ScannedbookActivity extends AppCompatActivity {
 
     private Button rescanButton;
     private Button addButton;
+
+    private String isbn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +46,21 @@ public class ScannedbookActivity extends AppCompatActivity {
         rescanButton = findViewById(R.id.rescanButton);
         addButton = findViewById(R.id.addButton);
 
+        this.isbn = getIntent().getStringExtra("isbn");
+
         Picasso.get().load(getIntent().getStringExtra("image")).into(imageView);
         bookTitle.setText(getIntent().getStringExtra("title"));
-        bookIsbn.setText(getIntent().getStringExtra("isbn"));
+        bookIsbn.setText(isbn);
         bookPublished.setText(getIntent().getStringExtra("published"));
     }
 
     public void add(View view){
-        BackendCaller.inst().addBook(bookIsbn.getText().toString(), (b) -> {
-            runOnUiThread(() -> {
-                errorLabel.setVisibility(!b ? View.VISIBLE : View.INVISIBLE);
-            });
-            if(!b){
-                return;
-            }
+        BackendCaller.inst().addBook(isbn, (b) -> {
 
         });
+        Intent i = new Intent(this, AddCopiesActivity.class);
+        i.putExtra("isbn", getIntent().getStringExtra("isbn"));
+        startActivity(i);
     }
 
     public void rescan(View view){

@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 import com.example.library.abstracts.BackendCaller;
 import com.example.library.abstracts.StaffDetails;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -57,7 +55,7 @@ public class HomeActivity extends AppCompatActivity {
                     });
                     return;
                 }
-                Intent i = new Intent(this, ScannedbookActivity.class);
+                Intent i = new Intent(this, ScannedBookActivity.class);
                 i.putExtra("title", b.getTitle());
                 i.putExtra("isbn", b.getIsbn());
                 i.putExtra("published", b.getPublished());

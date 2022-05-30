@@ -18,7 +18,7 @@
             android:name=".AddCopiesActivity"
             android:exported="false" />
         <activity
-            android:name=".ScannedbookActivity"
+            android:name=".ScannedBookActivity"
             android:exported="false" />
         <activity
             android:name=".HomeActivity"
