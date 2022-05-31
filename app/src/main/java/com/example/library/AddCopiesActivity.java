@@ -2,8 +2,10 @@ package com.example.library;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ public class AddCopiesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getSupportActionBar().hide();
         setContentView(R.layout.activity_add_copies);
 
         errorLabel = findViewById(R.id.add_copies_error);
@@ -82,7 +85,16 @@ public class AddCopiesActivity extends AppCompatActivity {
                     statusLabel.setText(copyItem.isAvailable() ? "TILLGÄNGLIG" : "UTLÅNAD");
                     removeButton.setEnabled(copyItem.isAvailable());
                     removeButton.setOnClickListener(l -> {
-                        //BackendCaller ta bort boken.
+                        BackendCaller.inst().deleteCopy(copyItem.getBookId(), (b) -> {
+                            runOnUiThread(() -> {
+                                if(!b){
+                                    toast("Boken blev inte borttagen", Color.RED);
+                                    return;
+                                }
+                                toast("Boken blev borttagen", Color.GREEN);
+                                loadContent();
+                            });
+                        });
                     });
                     copiesList.addView(copy);
                 }
@@ -102,10 +114,18 @@ public class AddCopiesActivity extends AppCompatActivity {
                     return;
                 }
                 errorLabel.setVisibility(View.INVISIBLE);
-                Toast.makeText(this, "Böckerna blev tillagda", Toast.LENGTH_LONG).show();
+                toast("Böckerna blev tillagda", Color.GREEN);
                 loadContent();
             });
         });
+    }
+
+    public void toast(String message, int color){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        View view = toast.getView();
+        TextView text = view.findViewById(android.R.id.message);
+        text.setTextColor(color);
+        toast.show();
     }
 
 }

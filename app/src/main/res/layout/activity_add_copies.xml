@@ -13,7 +13,7 @@
         android:layout_marginTop="20dp"
         android:scaleX="1.5"
         android:scaleY="1.5"
-        android:text="Välj mängd kopior som ska finnas"
+        android:text="Hantera exemplar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -106,9 +106,9 @@ public class BackendCaller {
         return "";
     }
 
-    public void loginCustomer(String username, String password, Callback<Staff> callback) {
+    public void loginStaff(String username, String password, Callback<Staff> callback) {
         tasks.add(() -> {
-            String data = request("api/employees/login?username=" + username + "&password=" + password);
+            String data = request("api/employees/login?email=" + username + "&password=" + password);
             Staff s = null;
             try{
                 JSONObject object = new JSONObject(data);
@@ -116,7 +116,7 @@ public class BackendCaller {
                         object.getInt("employee_id"),
                         object.getString("first_name"),
                         object.getString("last_name"),
-                        object.getString("username"),
+                        object.getString("email"),
                         object.getString("password"),
                         object.getString("role")
                 );
@@ -214,6 +214,13 @@ public class BackendCaller {
 
             }
             callback.call(output);
+        });
+    }
+
+    public void deleteCopy(int bookId, Callback<Boolean> callback){
+        tasks.add(() -> {
+           String data = request("api/books/delete/" + bookId);
+           callback.call(Boolean.parseBoolean(data));
         });
     }
 }
