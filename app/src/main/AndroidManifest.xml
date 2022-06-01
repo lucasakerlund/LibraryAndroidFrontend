@@ -15,8 +15,11 @@
         android:theme="@style/Theme.Library"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".BooksActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddCopiesActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".ScannedBookActivity"
             android:exported="false" />

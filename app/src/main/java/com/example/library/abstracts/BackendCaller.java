@@ -15,8 +15,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
@@ -106,9 +108,9 @@ public class BackendCaller {
         return "";
     }
 
-    public void loginStaff(String username, String password, Callback<Staff> callback) {
+    public void loginStaff(String email, String password, Callback<Staff> callback) {
         tasks.add(() -> {
-            String data = request("api/employees/login?email=" + username + "&password=" + password);
+            String data = request("api/employees/login?email=" + email + "&password=" + password);
             Staff s = null;
             try{
                 JSONObject object = new JSONObject(data);
@@ -128,6 +130,55 @@ public class BackendCaller {
         });
     }
 
+    public void getBooks(String language, String releaseDate, String library, String searchType, String search, String popularSort, Callback<List<Book>> callback){
+        try {
+            language = URLEncoder.encode(language, "UTF-8");
+            releaseDate = URLEncoder.encode(releaseDate, "UTF-8");
+            library = URLEncoder.encode(library, "UTF-8");
+            searchType = URLEncoder.encode(searchType, "UTF-8");
+            search = URLEncoder.encode(search, "UTF-8");
+            popularSort = URLEncoder.encode(popularSort, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String finalLanguage = language;
+        String finalReleaseDate = releaseDate;
+        String finalLibrary = library;
+        String finalSearchType = searchType;
+        String finalSearch = search;
+        String finalPopularSort = popularSort;
+        tasks.add(() -> {
+            String data = request("api/book_details?language=" + finalLanguage + "&releaseDate=" + finalReleaseDate + "&library=" + finalLibrary + "&searchType=" + finalSearchType + "&search=" + finalSearch + "&popularSort=" + finalPopularSort);
+            if(data.equals("")){
+                callback.call(new ArrayList<>());
+                return;
+            }
+            List<Book> output = new ArrayList<>();
+            try {
+                JSONArray array = new JSONArray(data);
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject object = array.getJSONObject(i);
+                    output.add(new Book(
+                            0,
+                            0,
+                            object.getString("title"),
+                            object.getString("description"),
+                            convertJSONArrayToStringArray(object.getJSONArray("authors")),
+                            convertJSONArrayToStringArray(object.getJSONArray("genres")),
+                            object.getString("isbn"),
+                            object.getString("published"),
+                            object.getInt("pages"),
+                            object.getString("language"),
+                            object.getString("image_source")
+                    ));
+                }
+            }catch(Exception e){
+
+            }
+            callback.call(output);
+        });
+    }
+
     public void getBookInformation(String isbn, Callback<Book> callback){
         tasks.add(() -> {
             String data = request("api/google/isbn/" + isbn);
@@ -135,10 +186,17 @@ public class BackendCaller {
             try {
                 JSONObject object = new JSONObject(data);
                 book = new Book(
+                        0,
+                        0,
                         object.getString("title"),
+                        object.getString("description"),
+                        convertJSONArrayToStringArray(object.getJSONArray("authors")),
+                        convertJSONArrayToStringArray(object.getJSONArray("genres")),
                         object.getString("isbn"),
                         object.getString("published"),
-                        object.getString("image")
+                        object.getInt("pages"),
+                        object.getString("language"),
+                        object.getString("image_source")
                 );
             }catch(Exception e){
 
@@ -222,5 +280,19 @@ public class BackendCaller {
            String data = request("api/books/delete/" + bookId);
            callback.call(Boolean.parseBoolean(data));
         });
+    }
+
+    private String[] convertJSONArrayToStringArray(JSONArray array){
+        List<String> output = new ArrayList<>();
+        try {
+            for (int i = 0; i < array.length(); i++) {
+                output.add(array.getString(i));
+                System.out.println(array.getString(i));
+                System.out.println(array);
+            }
+        }catch(Exception e){
+
+        }
+        return output.toArray(new String[output.size()]);
     }
 }

@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,6 +18,7 @@ import com.journeyapps.barcodescanner.ScanOptions;
 public class HomeActivity extends AppCompatActivity {
 
     private TextView greetingLabel;
+    private Button booksButton;
     private Button scanBarcode;
     private Button logout;
 
@@ -29,15 +29,15 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         greetingLabel = findViewById(R.id.greetingLabel);
-        scanBarcode = findViewById(R.id.scanBarcode);
+        scanBarcode = findViewById(R.id.booksButton);
         logout = findViewById(R.id.logout);
 
         greetingLabel.setText("Välkommen " + StaffDetails.inst().getStaff().getFirstName());
     }
 
-    public void logout(View view){
-        StaffDetails.inst().setStaff(null);
-        finish();
+    public void goToBooks(View view){
+        Intent i = new Intent(this, BooksActivity.class);
+        startActivity(i);
     }
 
     public void scan(View view){
@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
                 i.putExtra("title", b.getTitle());
                 i.putExtra("isbn", b.getIsbn());
                 i.putExtra("published", b.getPublished());
-                i.putExtra("image", b.getImage());
+                i.putExtra("image", b.getImageSrc());
                 startActivity(i);
             });
         }
@@ -72,6 +72,11 @@ public class HomeActivity extends AppCompatActivity {
         ScanOptions options = new ScanOptions();
         options.setCaptureActivity(CaptureAct.class);
         barLauncher.launch(options);
+    }
+
+    public void logout(View view){
+        StaffDetails.inst().setStaff(null);
+        finish();
     }
 
 }

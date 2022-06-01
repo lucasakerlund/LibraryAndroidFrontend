@@ -3,6 +3,7 @@ package com.example.library;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
+import android.icu.text.LocaleDisplayNames;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.library.abstracts.BackendCaller;
+import com.example.library.abstracts.Display;
 import com.example.library.models.CopyItem;
 import com.example.library.models.Library;
 
@@ -20,8 +22,6 @@ import org.w3c.dom.Text;
 import java.util.HashMap;
 
 public class AddCopiesActivity extends AppCompatActivity {
-
-    private TextView errorLabel;
 
     private LinearLayout list;
 
@@ -33,7 +33,6 @@ public class AddCopiesActivity extends AppCompatActivity {
         this.getSupportActionBar().hide();
         setContentView(R.layout.activity_add_copies);
 
-        errorLabel = findViewById(R.id.add_copies_error);
         list = findViewById(R.id.library_list);
         isbn = getIntent().getStringExtra("isbn");
 
@@ -66,11 +65,9 @@ public class AddCopiesActivity extends AppCompatActivity {
         addButton.setOnClickListener(l -> {
             int amount = Integer.parseInt(amountLabel.getText().toString());
             if(amount <= 0 || amount > 100){
-                errorLabel.setText("Antalet böcker måste vara mellan 1-100");
-                errorLabel.setVisibility(View.VISIBLE);
+                Display.toast(this, "Antalet böcker måste vara mellan 1-100", Color.RED);
                 return;
             }
-            errorLabel.setVisibility(View.INVISIBLE);
             addCopies(library.getLibraryId(), amount);
         });
 
@@ -88,10 +85,10 @@ public class AddCopiesActivity extends AppCompatActivity {
                         BackendCaller.inst().deleteCopy(copyItem.getBookId(), (b) -> {
                             runOnUiThread(() -> {
                                 if(!b){
-                                    toast("Boken blev inte borttagen", Color.RED);
+                                    Display.toast(this, "Boken blev inte borttagen", Color.RED);
                                     return;
                                 }
-                                toast("Boken blev borttagen", Color.GREEN);
+                                Display.toast(this, "Boken blev borttagen", Color.GREEN);
                                 loadContent();
                             });
                         });
@@ -109,23 +106,13 @@ public class AddCopiesActivity extends AppCompatActivity {
         BackendCaller.inst().addCopies(isbn, libraryId, amount, (b) -> {
             runOnUiThread(() -> {
                 if(!b){
-                    errorLabel.setText("Något fel inträffade.");
-                    errorLabel.setVisibility(View.VISIBLE);
+                    Display.toast(this, "Något fel inträffade.", Color.RED);
                     return;
                 }
-                errorLabel.setVisibility(View.INVISIBLE);
-                toast("Böckerna blev tillagda", Color.GREEN);
+                Display.toast(this, "Böckerna blev tillagda", Color.GREEN);
                 loadContent();
             });
         });
-    }
-
-    public void toast(String message, int color){
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-        View view = toast.getView();
-        TextView text = view.findViewById(android.R.id.message);
-        text.setTextColor(color);
-        toast.show();
     }
 
 }
