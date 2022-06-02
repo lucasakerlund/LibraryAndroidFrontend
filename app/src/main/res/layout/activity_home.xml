@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/greetingLabel" />
 
     <Button
-        android:id="@+id/scanBarcode2"
+        android:id="@+id/scanBarcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#5DF8E5"

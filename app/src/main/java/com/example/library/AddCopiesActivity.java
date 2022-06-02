@@ -115,4 +115,9 @@ public class AddCopiesActivity extends AppCompatActivity {
         });
     }
 
+    public void done(View view){
+        onBackPressed();
+        finish();
+    }
+
 }

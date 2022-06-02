@@ -27,14 +27,15 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
 
-        <SearchView
+        <com.example.library.components.SearchBar
             android:id="@+id/searchView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/expandButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -84,7 +85,7 @@
 
         <Spinner
             android:id="@+id/libraryChoice"
-            android:layout_width="117dp"
+            android:layout_width="wrap_content"
             android:layout_height="26dp"
             android:layout_marginStart="150dp"
             android:layout_marginTop="20dp"
@@ -120,7 +121,7 @@
 
         <Spinner
             android:id="@+id/popularityChoice"
-            android:layout_width="117dp"
+            android:layout_width="wrap_content"
             android:layout_height="26dp"
             android:layout_marginStart="150dp"
             android:layout_marginTop="20dp"
@@ -143,7 +144,7 @@
 
         <Spinner
             android:id="@+id/languageChoice"
-            android:layout_width="117dp"
+            android:layout_width="wrap_content"
             android:layout_height="26dp"
             android:layout_marginStart="150dp"
             android:layout_marginTop="20dp"
@@ -166,7 +167,7 @@
 
         <Spinner
             android:id="@+id/searchTypeChoice"
-            android:layout_width="117dp"
+            android:layout_width="wrap_content"
             android:layout_height="26dp"
             android:layout_marginStart="150dp"
             android:layout_marginTop="20dp"
@@ -176,11 +177,12 @@
 
         <EditText
             android:id="@+id/dateChoice"
-            android:layout_width="117dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="150dp"
             android:layout_marginTop="20dp"
             android:ems="10"
+            android:hint="yyyy-MM-dd"
             android:inputType="date"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

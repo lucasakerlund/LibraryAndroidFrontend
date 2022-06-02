@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,7 +30,8 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         greetingLabel = findViewById(R.id.greetingLabel);
-        scanBarcode = findViewById(R.id.booksButton);
+        booksButton = findViewById(R.id.booksButton);
+        scanBarcode = findViewById(R.id.scanBarcode);
         logout = findViewById(R.id.logout);
 
         greetingLabel.setText("Välkommen " + StaffDetails.inst().getStaff().getFirstName());
@@ -78,5 +80,4 @@ public class HomeActivity extends AppCompatActivity {
         StaffDetails.inst().setStaff(null);
         finish();
     }
-
 }

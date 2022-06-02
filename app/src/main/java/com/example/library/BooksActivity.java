@@ -1,6 +1,7 @@
 package com.example.library;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
@@ -13,13 +14,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.library.abstracts.BackendCaller;
 import com.example.library.abstracts.Display;
+import com.example.library.components.SearchBar;
 import com.example.library.models.Book;
+import com.example.library.models.Library;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -29,7 +31,7 @@ import java.util.List;
 
 public class BooksActivity extends AppCompatActivity {
 
-    private SearchView searchBar;
+    private SearchBar searchBar;
     private ImageButton expandButton;
     private ConstraintLayout filterView;
 
@@ -82,6 +84,9 @@ public class BooksActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 List<String> libraries = new ArrayList<>();
                 libraries.add("Alla");
+                for (Library library : list) {
+                    libraries.add(library.getName());
+                }
                 ArrayAdapter<String> libraryAdp = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, libraries);
                 libraryAdp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 libraryChoice.setAdapter(libraryAdp);
@@ -91,16 +96,14 @@ public class BooksActivity extends AppCompatActivity {
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public boolean onQueryTextSubmit(String query) {
+                searchBar.clearFocus();
                 loadBooks();
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                if(s.equals("")){
-                    loadBooks();
-                }
+            public boolean onQueryTextChange(String newText) {
                 return false;
             }
         });

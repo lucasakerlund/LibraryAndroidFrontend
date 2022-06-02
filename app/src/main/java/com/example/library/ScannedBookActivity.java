@@ -63,6 +63,7 @@ public class ScannedBookActivity extends AppCompatActivity {
         Intent i = new Intent(this, AddCopiesActivity.class);
         i.putExtra("isbn", getIntent().getStringExtra("isbn"));
         startActivity(i);
+        finish();
     }
 
     public void rescan(View view){
