@@ -5,6 +5,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -65,7 +66,7 @@ public class BooksActivity extends AppCompatActivity {
     }
 
     private void setup(){
-        String[] popularites = {"Någonsin", "År", "Månad", "Vecka"};
+        String[] popularites = {"Ingen sortering", "Någonsin", "År", "Månad", "Vecka"};
         ArrayAdapter<String> popularAdp = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, popularites);
         popularAdp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         popularityChoice.setAdapter(popularAdp);
@@ -109,39 +110,39 @@ public class BooksActivity extends AppCompatActivity {
         });
     }
 
-    public void loadBooks(){
-        list.removeAllViews();
-        String lang = "";
-        switch(languageChoice.getSelectedItem().toString().toLowerCase()){
+    private String translateLanguageChoice(String choice){
+        switch(choice.toLowerCase()){
             case "alla":
-                lang = "";
-                break;
+                return "";
             case "svenska":
-                lang = "SE";
-                break;
+                return "SE";
             case "engelska":
-                lang = "EN";
-                break;
+                return "EN";
         }
-        String popularSort = "";
-        switch(popularityChoice.getSelectedItem().toString().toLowerCase()){
+        return "";
+    }
+
+    private String translatePopularityChoice(String choice){
+        switch(choice.toLowerCase()){
             case "populäritet":
             case "ingen sortering":
-                popularSort = "";
-                break;
+                return "";
             case "någonsin":
-                popularSort = "ALL_TIME";
-                break;
+                return "ALL_TIME";
             case "år":
-                popularSort = "YEAR";
-                break;
+                return "YEAR";
             case "månad":
-                popularSort = "MONTH";
-                break;
+                return "MONTH";
             case "vecka":
-                popularSort = "WEEK";
-                break;
+                return "WEEK";
         }
+        return "";
+    }
+
+    public void loadBooks(){
+        list.removeAllViews();
+        String lang = translateLanguageChoice(languageChoice.getSelectedItem().toString());
+        String popularSort = translatePopularityChoice(popularityChoice.getSelectedItem().toString());
         if(!correctDateFormat()){
             Display.toast(this, "Formatet på datumet måste vara yyyy-MM-dd", Color.RED);
             return;
@@ -161,6 +162,12 @@ public class BooksActivity extends AppCompatActivity {
                             ImageView imageView = view.findViewById(R.id.books_book_image);
                             Picasso.get().load(book.getImageSrc()).into(imageView);
                             titleLabel.setText(book.getTitle());
+                            imageView.setOnClickListener(e -> {
+                                Intent i = new Intent(this, AddCopiesActivity.class);
+                                i.putExtra("isbn", book.getIsbn());
+                                startActivity(i);
+                            });
+
                             list.addView(view);
                         }
                     });

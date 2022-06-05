@@ -183,6 +183,7 @@ public class BackendCaller {
         tasks.add(() -> {
             String data = request("api/google/isbn/" + isbn);
             Book book = null;
+            System.out.println("abc " + data);
             try {
                 JSONObject object = new JSONObject(data);
                 book = new Book(
@@ -199,7 +200,7 @@ public class BackendCaller {
                         object.getString("image_source")
                 );
             }catch(Exception e){
-
+                System.out.println("ERROROR");
             }
             callback.call(book);
         });
@@ -287,11 +288,12 @@ public class BackendCaller {
         try {
             for (int i = 0; i < array.length(); i++) {
                 output.add(array.getString(i));
-                System.out.println(array.getString(i));
-                System.out.println(array);
             }
         }catch(Exception e){
 
+        }
+        if(output.isEmpty()){
+            return new String[]{""};
         }
         return output.toArray(new String[output.size()]);
     }
