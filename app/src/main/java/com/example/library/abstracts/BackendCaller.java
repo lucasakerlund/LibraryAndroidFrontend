@@ -109,8 +109,10 @@ public class BackendCaller {
     }
 
     public void loginStaff(String email, String password, Callback<Staff> callback) {
+        String finalEmail = encode(email);
+        String finalPassword = encode(password);
         tasks.add(() -> {
-            String data = request("api/employees/login?email=" + email + "&password=" + password);
+            String data = request("api/employees/login?email=" + finalEmail + "&password=" + finalPassword);
             Staff s = null;
             try{
                 JSONObject object = new JSONObject(data);
@@ -131,22 +133,12 @@ public class BackendCaller {
     }
 
     public void getBooks(String language, String releaseDate, String library, String searchType, String search, String popularSort, Callback<List<Book>> callback){
-        try {
-            language = URLEncoder.encode(language, "UTF-8");
-            releaseDate = URLEncoder.encode(releaseDate, "UTF-8");
-            library = URLEncoder.encode(library, "UTF-8");
-            searchType = URLEncoder.encode(searchType, "UTF-8");
-            search = URLEncoder.encode(search, "UTF-8");
-            popularSort = URLEncoder.encode(popularSort, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String finalLanguage = language;
-        String finalReleaseDate = releaseDate;
-        String finalLibrary = library;
-        String finalSearchType = searchType;
-        String finalSearch = search;
-        String finalPopularSort = popularSort;
+        String finalLanguage = encode(language);
+        String finalReleaseDate = encode(language);
+        String finalLibrary = encode(library);
+        String finalSearchType = encode(searchType);
+        String finalSearch = encode(search);
+        String finalPopularSort = encode(popularSort);
         tasks.add(() -> {
             String data = request("api/book_details?language=" + finalLanguage + "&releaseDate=" + finalReleaseDate + "&library=" + finalLibrary + "&searchType=" + finalSearchType + "&search=" + finalSearch + "&popularSort=" + finalPopularSort);
             if(data.equals("")){
@@ -257,8 +249,9 @@ public class BackendCaller {
     }
 
     public void getCopiesInLibrary(int libraryId, String isbn, Callback<List<CopyItem>> callback){
+        String finalIsbn = encode(isbn);;
         tasks.add(() -> {
-            String data = request("api/books/copies_in_library?library_id=" + libraryId + "&isbn=" + isbn);
+            String data = request("api/books/copies_in_library?library_id=" + libraryId + "&isbn=" + finalIsbn);
             List<CopyItem> output = new ArrayList<>();
             try{
                 JSONArray array = new JSONArray(data);
@@ -296,5 +289,14 @@ public class BackendCaller {
             return new String[]{""};
         }
         return output.toArray(new String[output.size()]);
+    }
+
+    private String encode(String text){
+        try{
+            return URLEncoder.encode(text, "UTF-8");
+        }catch(Exception e){
+
+        }
+        return "";
     }
 }
