@@ -179,10 +179,8 @@ public class BackendCaller {
                 JSONObject object = null;
                 if(data.equals("")){
                     String reserveData = request("api/google/isbn/" + isbn);
-                    System.out.println("ABC " + reserveData);
                     object = new JSONObject(reserveData);
                 }else{
-                    System.out.println("ABCD " + data);
                     object = new JSONObject(data);
                 }
                 book = new Book(
