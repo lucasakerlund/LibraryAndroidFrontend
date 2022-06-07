@@ -134,7 +134,7 @@ public class BackendCaller {
 
     public void getBooks(String language, String releaseDate, String library, String searchType, String search, String popularSort, Callback<List<Book>> callback){
         String finalLanguage = encode(language);
-        String finalReleaseDate = encode(language);
+        String finalReleaseDate = encode(releaseDate);
         String finalLibrary = encode(library);
         String finalSearchType = encode(searchType);
         String finalSearch = encode(search);
