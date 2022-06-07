@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.library.abstracts.BackendCaller;
+import com.example.library.abstracts.ImageUtils;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
@@ -50,7 +51,7 @@ public class ScannedBookActivity extends AppCompatActivity {
 
         this.isbn = getIntent().getStringExtra("isbn");
 
-        Picasso.get().load(getIntent().getStringExtra("image")).into(imageView);
+        ImageUtils.setImage(getIntent().getStringExtra("image"), imageView);
         bookTitle.setText(getIntent().getStringExtra("title"));
         bookIsbn.setText(isbn);
         bookPublished.setText(getIntent().getStringExtra("published"));

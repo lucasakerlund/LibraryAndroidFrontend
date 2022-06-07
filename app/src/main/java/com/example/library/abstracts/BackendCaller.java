@@ -173,25 +173,33 @@ public class BackendCaller {
 
     public void getBookInformation(String isbn, Callback<Book> callback){
         tasks.add(() -> {
-            String data = request("api/google/isbn/" + isbn);
+            String data = request("api/book_details/" + isbn);
             Book book = null;
-            System.out.println("abc " + data);
             try {
-                JSONObject object = new JSONObject(data);
+                JSONObject object = null;
+                if(data.equals("")){
+                    String reserveData = request("api/google/isbn/" + isbn);
+                    System.out.println("ABC " + reserveData);
+                    object = new JSONObject(reserveData);
+                }else{
+                    System.out.println("ABCD " + data);
+                    object = new JSONObject(data);
+                }
                 book = new Book(
                         0,
                         0,
-                        object.getString("title"),
-                        object.getString("description"),
-                        convertJSONArrayToStringArray(object.getJSONArray("authors")),
-                        convertJSONArrayToStringArray(object.getJSONArray("genres")),
-                        object.getString("isbn"),
-                        object.getString("published"),
-                        object.getInt("pages"),
-                        object.getString("language"),
-                        object.getString("image_source")
+                        object.isNull("title") ? "" : object.getString("title"),
+                        object.isNull("description") ? "" : object.getString("description"),
+                        object.isNull("authors") ? new String[]{} : convertJSONArrayToStringArray(object.getJSONArray("authors")),
+                        object.isNull("genres") ? new String[]{} : convertJSONArrayToStringArray(object.getJSONArray("genres")),
+                        object.isNull("isbn") ? "" : object.getString("isbn"),
+                        object.isNull("published") ? "" : object.getString("published"),
+                        object.isNull("pages") ? 0 : object.getInt("pages"),
+                        object.isNull("languages") ? "" : object.getString("language"),
+                        object.isNull("image_source") ? "" : object.getString("image_source")
                 );
             }catch(Exception e){
+                e.printStackTrace();
                 System.out.println("ERROROR");
             }
             callback.call(book);

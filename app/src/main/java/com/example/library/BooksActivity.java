@@ -20,10 +20,10 @@ import android.widget.TextView;
 
 import com.example.library.abstracts.BackendCaller;
 import com.example.library.abstracts.Display;
+import com.example.library.abstracts.ImageUtils;
 import com.example.library.components.SearchBar;
 import com.example.library.models.Book;
 import com.example.library.models.Library;
-import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -160,7 +160,7 @@ public class BooksActivity extends AppCompatActivity {
                             View view = getLayoutInflater().inflate(R.layout.books_book_item, null, false);
                             TextView titleLabel = view.findViewById(R.id.books_book_title);
                             ImageView imageView = view.findViewById(R.id.books_book_image);
-                            Picasso.get().load(book.getImageSrc()).into(imageView);
+                            ImageUtils.setImage(book.getImageSrc(), imageView);
                             titleLabel.setText(book.getTitle());
                             imageView.setOnClickListener(e -> {
                                 Intent i = new Intent(this, AddCopiesActivity.class);
